@@ -1,0 +1,1705 @@
+[
+    {
+        "id": "2d683e7f271f8fbf",
+        "type": "tab",
+        "label": "フロー 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8c325e0d5615235b",
+        "type": "debug",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1070,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "fed50f32c7fb78b3",
+        "type": "serial request",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 590,
+        "y": 680,
+        "wires": [
+            [
+                "0da8d4e45b927b5b"
+            ]
+        ]
+    },
+    {
+        "id": "ee10239a6e2d3877",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Search Result",
+        "func": "var buf = new Buffer(4); \nbuf[0]=0x53;//restart\nbuf[1]=0x81;//i2c addr (0x40<1)+1, write addr+1 = read addr\nbuf[2]=0x0B;//recieve data 11\nbuf[3]=0x50;//stop\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 680,
+        "wires": [
+            [
+                "fed50f32c7fb78b3"
+            ]
+        ]
+    },
+    {
+        "id": "0da8d4e45b927b5b",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Check Result",
+        "func": "var result={id:\"\",hasNextDevice:false,msg:\"\"};\nvar res=\"\";\nvar hasNextDevice=false;\nvar deviceId=\"\";\n\n\nif(msg.payload[1]==0xAA)\n{\n    res=\"Command Success\";\n    \n    deviceId= msg.payload[2].toString(16) + \":\"\n            + msg.payload[3].toString(16) + \":\"\n            + msg.payload[4].toString(16) + \":\"\n            + msg.payload[5].toString(16) + \":\"\n            + msg.payload[6].toString(16) + \":\"\n            + msg.payload[7].toString(16) + \":\"\n            + msg.payload[8].toString(16) + \":\"\n            + msg.payload[9].toString(16) ;\n    \n    if(msg.payload[10]==0)\n    {\n        hasNextDevice=true;\n    }\n    \n}\nelse\n{\n    res=\"Command Falied\";\n}\n\nresult.id=deviceId;\nresult.hasNextDevice=hasNextDevice;\nresult.msg=res;\n\nmsg.payload=result;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 680,
+        "wires": [
+            [
+                "8c325e0d5615235b"
+            ]
+        ]
+    },
+    {
+        "id": "293f0106d428fc8a",
+        "type": "serial out",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 620,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "cd43873ff6f4b053",
+        "type": "inject",
+        "z": "2d683e7f271f8fbf",
+        "name": "1-Wire Bus Reset and Search Command",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 190,
+        "y": 500,
+        "wires": [
+            [
+                "df8e45133804609a"
+            ]
+        ]
+    },
+    {
+        "id": "df8e45133804609a",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Send Search Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x11;//search command\nbuf[4]=0x02;//data size 2\nbuf[5]=0b00000101;//Param\nbuf[6]=0xF0;//0xF0\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 560,
+        "wires": [
+            [
+                "293f0106d428fc8a",
+                "b24fe82d43da98d7"
+            ]
+        ]
+    },
+    {
+        "id": "dd72dbeff68e98de",
+        "type": "comment",
+        "z": "2d683e7f271f8fbf",
+        "name": "DS2485 1-Wire マスタコンバータサンプル",
+        "info": "",
+        "x": 160,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "1f7b817d87b33b75",
+        "type": "debug",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1170,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a55af90e28fa25d2",
+        "type": "serial request",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 690,
+        "y": 220,
+        "wires": [
+            [
+                "8586320f268ce4ae"
+            ]
+        ]
+    },
+    {
+        "id": "2d19f78eb44bd124",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Search Result",
+        "func": "var buf = new Buffer(4); \nbuf[0]=0x53;//restart\nbuf[1]=0x81;//i2c addr (0x40<1)+1, write addr+1 = read addr\nbuf[2]=0x02;//recieve data 1\nbuf[3]=0x50;//stop\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 220,
+        "wires": [
+            [
+                "a55af90e28fa25d2"
+            ]
+        ]
+    },
+    {
+        "id": "8586320f268ce4ae",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Check Result",
+        "func": "\n\nif(msg.payload[1]==0xAA)\n{\n    msg.payload=\"Command Sucess\";\n}\nelse\n{\n    msg.payload=\"Command Failed\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 260,
+        "wires": [
+            [
+                "1f7b817d87b33b75"
+            ]
+        ]
+    },
+    {
+        "id": "fb20cd28874f0cd1",
+        "type": "serial out",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 720,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "ef10d03aa7331a16",
+        "type": "inject",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "1-Wire Master Reset Command",
+        "payloadType": "str",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "3f2b3dc9a034d745"
+            ]
+        ]
+    },
+    {
+        "id": "3f2b3dc9a034d745",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Send Reset Command",
+        "func": "\nvar buf = new Buffer(5); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x01;//send data 1\nbuf[3]=0x62;//send data 1\nbuf[4]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "fb20cd28874f0cd1",
+                "0cba4d24c7096245"
+            ]
+        ]
+    },
+    {
+        "id": "94c22c9bc866d125",
+        "type": "serial out",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 690,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "f03649e9b08dd29c",
+        "type": "inject",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "1-Wire Set RPUP/BUF Command",
+        "payloadType": "str",
+        "x": 190,
+        "y": 320,
+        "wires": [
+            [
+                "99d7773e4b3c4cff"
+            ]
+        ]
+    },
+    {
+        "id": "99d7773e4b3c4cff",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Set RPUP/BUF Reg",
+        "func": "\nvar buf = new Buffer(9); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x05;//send data 4\nbuf[3]=0x99;//Port Cfg\nbuf[4]=0x03;//Data Size\nbuf[5]=0x11;//Reg 11 \nbuf[6]=0x06;//Low\nbuf[7]=0x00;//High\nbuf[8]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 320,
+        "wires": [
+            [
+                "94c22c9bc866d125",
+                "d2ec2cd9676da11c"
+            ]
+        ]
+    },
+    {
+        "id": "2a27e7a17e0371ca",
+        "type": "serial request",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 690,
+        "y": 380,
+        "wires": [
+            [
+                "8586320f268ce4ae"
+            ]
+        ]
+    },
+    {
+        "id": "11f6ea100f3bba85",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Result",
+        "func": "var buf = new Buffer(4); \nbuf[0]=0x53;//restart\nbuf[1]=0x81;//i2c addr (0x40<1)+1, write addr+1 = read addr\nbuf[2]=0x02;//recieve data 1\nbuf[3]=0x50;//stop\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 380,
+        "wires": [
+            [
+                "2a27e7a17e0371ca"
+            ]
+        ]
+    },
+    {
+        "id": "b24fe82d43da98d7",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "500",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 390,
+        "y": 620,
+        "wires": [
+            [
+                "ee10239a6e2d3877"
+            ]
+        ]
+    },
+    {
+        "id": "23f1b5bc28495ef0",
+        "type": "serial request",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 590,
+        "y": 920,
+        "wires": [
+            [
+                "0da8d4e45b927b5b"
+            ]
+        ]
+    },
+    {
+        "id": "3b49bdbe45da3908",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Search Result",
+        "func": "var buf = new Buffer(4); \nbuf[0]=0x53;//restart\nbuf[1]=0x81;//i2c addr (0x40<1)+1, write addr+1 = read addr\nbuf[2]=0x0B;//recieve data 11\nbuf[3]=0x50;//stop\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 920,
+        "wires": [
+            [
+                "23f1b5bc28495ef0"
+            ]
+        ]
+    },
+    {
+        "id": "093796a0ecbc16f1",
+        "type": "serial out",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 590,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "dff58aa8b39d91dd",
+        "type": "inject",
+        "z": "2d683e7f271f8fbf",
+        "name": "1-Wire Only Search Command( Find Next Device )",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 220,
+        "y": 740,
+        "wires": [
+            [
+                "08691b38d09dc9ca"
+            ]
+        ]
+    },
+    {
+        "id": "08691b38d09dc9ca",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Send Search Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x11;//search command\nbuf[4]=0x02;//data size 2\nbuf[5]=0b00000001;//Param\nbuf[6]=0xF0;//0xF0\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 800,
+        "wires": [
+            [
+                "093796a0ecbc16f1",
+                "3a5310ca05eef6c2"
+            ]
+        ]
+    },
+    {
+        "id": "3a5310ca05eef6c2",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "500",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 390,
+        "y": 860,
+        "wires": [
+            [
+                "3b49bdbe45da3908"
+            ]
+        ]
+    },
+    {
+        "id": "a2a77ecea6381ec1",
+        "type": "comment",
+        "z": "2d683e7f271f8fbf",
+        "name": "Initialize DS2485",
+        "info": "",
+        "x": 100,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "35a7343fa19f6b18",
+        "type": "comment",
+        "z": "2d683e7f271f8fbf",
+        "name": "Search 1-Wire Devices",
+        "info": "",
+        "x": 120,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "aef37766bb37d00e",
+        "type": "comment",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Temp From DS18B20",
+        "info": "",
+        "x": 120,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "2e271ea56183e0e6",
+        "type": "serial request",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 1670,
+        "y": 1780,
+        "wires": [
+            [
+                "6bc813e6aac52fd7"
+            ]
+        ]
+    },
+    {
+        "id": "f728e43bb573b8a1",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "READ BYTE",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x08;//READ BYTE\nbuf[6]=0x09;//READ BYTE LEN\nbuf[7]=0x50;//stop\n\n\nmsg.payload = buf;\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 1720,
+        "wires": [
+            [
+                "547b0d824d0de50f",
+                "3ebf777d41774169"
+            ]
+        ]
+    },
+    {
+        "id": "3ebf777d41774169",
+        "type": "serial out",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 1750,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "cf6e5b5f5059abcb",
+        "type": "inject",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Temp",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 1180,
+        "y": 1120,
+        "wires": [
+            [
+                "72349e05e6f7ab92"
+            ]
+        ]
+    },
+    {
+        "id": "d7d64a4dacdbe4fe",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Reset Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x00;//OW_RESET\nbuf[6]=0b10000010;//OW_RESET RP\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 1240,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "71ba189ff358e9b9"
+            ]
+        ]
+    },
+    {
+        "id": "22990b6291b74960",
+        "type": "debug",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1990,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "aa7a0877086515ed",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "MATCH COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0x55;//MATCH ROM\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1490,
+        "y": 1300,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "356e42b95c5ba671"
+            ]
+        ]
+    },
+    {
+        "id": "6b9e952be3080def",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "SEND ROMID",
+        "func": "\n//Please change your romid according to your search result.\nvar romid=[0x3B,0x8A,0x9D,0xF2,0x0E,0x9C,0x4C,0x35];\n\n\n\nvar buf = new Buffer(16); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x0C;//send data 12\nbuf[3]=0x88;//Script Command\nbuf[4]=0x0A;//Len\nbuf[5]=0x09;//WRITE BYTE\nbuf[6]=0x08;//WRITE BYTE LEN\nbuf[7]=romid[0];\nbuf[8]=romid[1];\nbuf[9]=romid[2];\nbuf[10]=romid[3];\nbuf[11]=romid[4];\nbuf[12]=romid[5];\nbuf[13]=romid[6];\nbuf[14]=romid[7];\nbuf[15]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 1360,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "69adedc76a6f3d27"
+            ]
+        ]
+    },
+    {
+        "id": "a59ff73eb6d3df90",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "CONVERT T COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0x44;//Convert T\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1500,
+        "y": 1420,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "7e614ee4068aad7c"
+            ]
+        ]
+    },
+    {
+        "id": "71ba189ff358e9b9",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1300,
+        "wires": [
+            [
+                "aa7a0877086515ed"
+            ]
+        ]
+    },
+    {
+        "id": "356e42b95c5ba671",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1360,
+        "wires": [
+            [
+                "6b9e952be3080def"
+            ]
+        ]
+    },
+    {
+        "id": "69adedc76a6f3d27",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1420,
+        "wires": [
+            [
+                "a59ff73eb6d3df90"
+            ]
+        ]
+    },
+    {
+        "id": "7e614ee4068aad7c",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "100",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1310,
+        "y": 1480,
+        "wires": [
+            [
+                "400443e72b415f9e"
+            ]
+        ]
+    },
+    {
+        "id": "400443e72b415f9e",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Reset Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x00;//OW_RESET\nbuf[6]=0b10000010;//OW_RESET RP\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 1480,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "577d275e0ba408c2"
+            ]
+        ]
+    },
+    {
+        "id": "577d275e0ba408c2",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1540,
+        "wires": [
+            [
+                "c6511db5d8a869cb"
+            ]
+        ]
+    },
+    {
+        "id": "c6511db5d8a869cb",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "MATCH COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0x55;//MATCH ROM\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1490,
+        "y": 1540,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "ea9ef0f5c5261ed5"
+            ]
+        ]
+    },
+    {
+        "id": "b2a53142ba6f4cd8",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "SEND ROMID",
+        "func": "\n//Please change your romid according to your search result.\nvar romid=[0x3B,0x8A,0x9D,0xF2,0x0E,0x9C,0x4C,0x35];\n\n\n\nvar buf = new Buffer(16); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x0C;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x0A;//Len\nbuf[5]=0x09;//WRITE BYTE\nbuf[6]=0x08;//WRITE BYTE LEN\nbuf[7]=romid[0];\nbuf[8]=romid[1];\nbuf[9]=romid[2];\nbuf[10]=romid[3];\nbuf[11]=romid[4];\nbuf[12]=romid[5];\nbuf[13]=romid[6];\nbuf[14]=romid[7];\nbuf[15]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 1600,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "7127839ba12cfad1"
+            ]
+        ]
+    },
+    {
+        "id": "ea9ef0f5c5261ed5",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1600,
+        "wires": [
+            [
+                "b2a53142ba6f4cd8"
+            ]
+        ]
+    },
+    {
+        "id": "7127839ba12cfad1",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1660,
+        "wires": [
+            [
+                "fd8cc64b28962d1c"
+            ]
+        ]
+    },
+    {
+        "id": "fd8cc64b28962d1c",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "READ SCRATCHPAD ",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0xBE;//READ SCRATCHPAD \nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1500,
+        "y": 1660,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "35d0f3978ee57306"
+            ]
+        ]
+    },
+    {
+        "id": "35d0f3978ee57306",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1720,
+        "wires": [
+            [
+                "f728e43bb573b8a1"
+            ]
+        ]
+    },
+    {
+        "id": "8ed55bf1233c237a",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Search Result",
+        "func": "var buf = new Buffer(4); \nbuf[0]=0x53;//restart\nbuf[1]=0x81;//i2c addr (0x40<1)+1, write addr+1 = read addr\nbuf[2]=0x0D;//recieve data 12\nbuf[3]=0x50;//stop\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1490,
+        "y": 1780,
+        "wires": [
+            [
+                "2e271ea56183e0e6"
+            ]
+        ]
+    },
+    {
+        "id": "547b0d824d0de50f",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1780,
+        "wires": [
+            [
+                "8ed55bf1233c237a"
+            ]
+        ]
+    },
+    {
+        "id": "6bc813e6aac52fd7",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Check Result",
+        "func": "\nvar tmpByte=msg.payload[5]*256.0+msg.payload[4]*1.0;\n\nvar tmpFloat=0.0;\n\nif(tmpByte&0xF800)\n{\n    tmpFloat=-1.0*((~tmpByte+1)*0.0625);\n}\nelse\n{\n    tmpFloat=tmpByte*0.0625;\n}\n\n\nmsg.payload=tmpFloat+\" ℃\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1850,
+        "y": 1840,
+        "wires": [
+            [
+                "22990b6291b74960"
+            ]
+        ]
+    },
+    {
+        "id": "59f116bf07ed54ed",
+        "type": "serial request",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 590,
+        "y": 1700,
+        "wires": [
+            [
+                "dfe2cd369558060f"
+            ]
+        ]
+    },
+    {
+        "id": "41cdd32084483b58",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "READ BYTE",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x08;//READ BYTE\nbuf[6]=0x09;//READ BYTE LEN\nbuf[7]=0x50;//stop\n\n\nmsg.payload = buf;\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1640,
+        "wires": [
+            [
+                "11d4657a7d0461f6",
+                "494680bae1c04be1"
+            ]
+        ]
+    },
+    {
+        "id": "494680bae1c04be1",
+        "type": "serial out",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "serial": "7b1a2a97.73a96c",
+        "x": 670,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "703bde8b1ebcacf6",
+        "type": "inject",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Temp",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "str",
+        "x": 100,
+        "y": 1100,
+        "wires": [
+            [
+                "411f8ccc2d6fe42c"
+            ]
+        ]
+    },
+    {
+        "id": "411f8ccc2d6fe42c",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Reset Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x00;//OW_RESET\nbuf[6]=0b10000010;//OW_RESET RP\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1160,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "c97f75a7b0099049"
+            ]
+        ]
+    },
+    {
+        "id": "c1f9fe74737f3578",
+        "type": "debug",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 910,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "2426c55f9e7a5cd7",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "MATCH COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0x55;//MATCH ROM\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 1220,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "2a8330ca2ee54744"
+            ]
+        ]
+    },
+    {
+        "id": "d2d51a4d7c653895",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "SEND ROMID",
+        "func": "\n//Please change your romid according to your search result.\nvar romid=[0x28,0xE1,0x3B,0x6E,0x08,0x00,0x00,0x54];\n\n\n\nvar buf = new Buffer(16); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x0C;//send data 12\nbuf[3]=0x88;//Script Command\nbuf[4]=0x0A;//Len\nbuf[5]=0x09;//WRITE BYTE\nbuf[6]=0x08;//WRITE BYTE LEN\nbuf[7]=romid[0];\nbuf[8]=romid[1];\nbuf[9]=romid[2];\nbuf[10]=romid[3];\nbuf[11]=romid[4];\nbuf[12]=romid[5];\nbuf[13]=romid[6];\nbuf[14]=romid[7];\nbuf[15]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1280,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "08d83379a2bd7487"
+            ]
+        ]
+    },
+    {
+        "id": "7d376690d5e10f7c",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "CONVERT T COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0x44;//Convert T\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 1340,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "5544610d66a0ca98"
+            ]
+        ]
+    },
+    {
+        "id": "c97f75a7b0099049",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1220,
+        "wires": [
+            [
+                "2426c55f9e7a5cd7"
+            ]
+        ]
+    },
+    {
+        "id": "2a8330ca2ee54744",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1280,
+        "wires": [
+            [
+                "d2d51a4d7c653895"
+            ]
+        ]
+    },
+    {
+        "id": "08d83379a2bd7487",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1340,
+        "wires": [
+            [
+                "7d376690d5e10f7c"
+            ]
+        ]
+    },
+    {
+        "id": "5544610d66a0ca98",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "750",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 190,
+        "y": 1400,
+        "wires": [
+            [
+                "bd9c686cbe16e816"
+            ]
+        ]
+    },
+    {
+        "id": "bd9c686cbe16e816",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Reset Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x00;//OW_RESET\nbuf[6]=0b10000010;//OW_RESET RP\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1400,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "50b93e395ebd9313"
+            ]
+        ]
+    },
+    {
+        "id": "50b93e395ebd9313",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1460,
+        "wires": [
+            [
+                "488d99e98af63324"
+            ]
+        ]
+    },
+    {
+        "id": "488d99e98af63324",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "MATCH COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0x55;//MATCH ROM\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 1460,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "44a443d89b7f19d8"
+            ]
+        ]
+    },
+    {
+        "id": "57a7f8906bc5d407",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "SEND ROMID",
+        "func": "\n//Please change your romid according to your search result.\nvar romid=[0x28,0xE1,0x3B,0x6E,0x08,0x00,0x00,0x54];\n\n\n\nvar buf = new Buffer(16); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x0C;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x0A;//Len\nbuf[5]=0x09;//WRITE BYTE\nbuf[6]=0x08;//WRITE BYTE LEN\nbuf[7]=romid[0];\nbuf[8]=romid[1];\nbuf[9]=romid[2];\nbuf[10]=romid[3];\nbuf[11]=romid[4];\nbuf[12]=romid[5];\nbuf[13]=romid[6];\nbuf[14]=romid[7];\nbuf[15]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 1520,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "29e0e3685fb5bf63"
+            ]
+        ]
+    },
+    {
+        "id": "44a443d89b7f19d8",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1520,
+        "wires": [
+            [
+                "57a7f8906bc5d407"
+            ]
+        ]
+    },
+    {
+        "id": "29e0e3685fb5bf63",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1580,
+        "wires": [
+            [
+                "edae890048ea7437"
+            ]
+        ]
+    },
+    {
+        "id": "edae890048ea7437",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "READ SCRATCHPAD ",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0xBE;//READ SCRATCHPAD \nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 1580,
+        "wires": [
+            [
+                "494680bae1c04be1",
+                "06beb2afa2f5c683"
+            ]
+        ]
+    },
+    {
+        "id": "06beb2afa2f5c683",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1640,
+        "wires": [
+            [
+                "41cdd32084483b58"
+            ]
+        ]
+    },
+    {
+        "id": "22f70b0d440d0218",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Search Result",
+        "func": "var buf = new Buffer(4); \nbuf[0]=0x53;//restart\nbuf[1]=0x81;//i2c addr (0x40<1)+1, write addr+1 = read addr\nbuf[2]=0x0D;//recieve data 12\nbuf[3]=0x50;//stop\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 1700,
+        "wires": [
+            [
+                "59f116bf07ed54ed"
+            ]
+        ]
+    },
+    {
+        "id": "11d4657a7d0461f6",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 220,
+        "y": 1700,
+        "wires": [
+            [
+                "22f70b0d440d0218"
+            ]
+        ]
+    },
+    {
+        "id": "dfe2cd369558060f",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Check Result",
+        "func": "\nvar tmpByte=msg.payload[5]*256.0+msg.payload[4]*1.0;\n\nvar tmpFloat=0.0;\n\nif(tmpByte&0xF800)\n{\n    tmpFloat=-1.0*((~tmpByte+1)*0.0625);\n}\nelse\n{\n    tmpFloat=tmpByte*0.0625;\n}\n\n\nmsg.payload=tmpFloat+\" ℃\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 1760,
+        "wires": [
+            [
+                "c1f9fe74737f3578"
+            ]
+        ]
+    },
+    {
+        "id": "984a1cd7c038b602",
+        "type": "comment",
+        "z": "2d683e7f271f8fbf",
+        "name": "Get Temp From MAX31850K",
+        "info": "",
+        "x": 1220,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "72349e05e6f7ab92",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "Reset Command",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x00;//OW_RESET\nbuf[6]=0b10000010;//OW_RESET RP\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 1120,
+        "wires": [
+            [
+                "52e6a0610876ac91",
+                "3ebf777d41774169"
+            ]
+        ]
+    },
+    {
+        "id": "fb1abf732ceec82b",
+        "type": "function",
+        "z": "2d683e7f271f8fbf",
+        "name": "SEARCH COMMAND",
+        "func": "\nvar buf = new Buffer(8); \nbuf[0]=0x53;//start\nbuf[1]=0x80;//i2c addr (0x40<1)\nbuf[2]=0x04;//send data 4\nbuf[3]=0x88;//Script Command\nbuf[4]=0x02;//Len\nbuf[5]=0x03;//WRITE BYTE\nbuf[6]=0xF0;//SEARCH ROM\nbuf[7]=0x50;//stop\n\nmsg.payload = buf;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1500,
+        "y": 1180,
+        "wires": [
+            [
+                "3ebf777d41774169",
+                "17d3565c306f0f06"
+            ]
+        ]
+    },
+    {
+        "id": "52e6a0610876ac91",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1180,
+        "wires": [
+            [
+                "fb1abf732ceec82b"
+            ]
+        ]
+    },
+    {
+        "id": "17d3565c306f0f06",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1300,
+        "y": 1240,
+        "wires": [
+            [
+                "d7d64a4dacdbe4fe"
+            ]
+        ]
+    },
+    {
+        "id": "0cba4d24c7096245",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "2d19f78eb44bd124"
+            ]
+        ]
+    },
+    {
+        "id": "d2ec2cd9676da11c",
+        "type": "delay",
+        "z": "2d683e7f271f8fbf",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "10",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 290,
+        "y": 380,
+        "wires": [
+            [
+                "11f6ea100f3bba85"
+            ]
+        ]
+    },
+    {
+        "id": "7b1a2a97.73a96c",
+        "type": "serial-port",
+        "serialport": "COM5",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "300",
+        "bin": "bin",
+        "out": "interbyte",
+        "addchar": "",
+        "responsetimeout": ""
+    }
+]
