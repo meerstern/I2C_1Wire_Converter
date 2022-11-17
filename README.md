@@ -13,11 +13,12 @@ I2C_1Wire_Converter with DS2485
   * 1Wireの接続はVCC、1Wire、GNDの2.54mmピッチターミナルコネクタを使用しています  
   * 1Wireの電源及び信号電圧レベルはGroveコネクタから供給する電源電圧に一致します  
   * 電源電圧：3.3V~5V
+  * 基板サイズ25mm x30mm、固定穴M3x2 幅19mm
   
   
-<img src="https://raw.githubusercontent.com/meerstern/I2C_1Wire_Converter/master/IMG/img1.jpeg" width="360">
+<img src="https://github.com/meerstern/I2C_1Wire_Converter/blob/main/IMG/img1.jpg" width="360">
    
-<img src="https://raw.githubusercontent.com/meerstern/I2C_1Wire_Converter/master/IMG/img2.jpeg" width="360">
+<img src="https://github.com/meerstern/I2C_1Wire_Converter/blob/main/IMG/img2.jpg" width="360">
   
 [1]: https://www.maximintegrated.com/jp/products/ibutton-one-wire/memory-products/DS2485.html
   
