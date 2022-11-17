@@ -1,0 +1,29 @@
+### Module positions - created on 2022/08/21 12:43:46 ###
+### Printed by Pcbnew version kicad (5.1.2)-1
+## Unit = mm, Angle = deg.
+## Side : All
+# Ref     Val               Package                   PosX       PosY       Rot  Side
+C1        10u               C_0805_2012Metric     109.2000   -95.1000  270.0000  top
+C2        0.01u             C_0603_1608Metric     112.6880   -97.8000  180.0000  top
+C3        10u               C_0805_2012Metric     116.0000   -95.0375  270.0000  top
+C4        0.1u              C_0603_1608Metric     116.9975  -104.7500    0.0000  top
+D1        LED               LED_0603_1608Metric   113.0880   -92.1000    0.0000  top
+J1        Conn_01x04        GROVE                 108.0000  -105.0000   90.0000  top
+Q1        Q_NMOS_GSD        SOT-23                109.6000  -109.9000   90.0000  top
+Q2        Q_NMOS_GSD        SOT-23                114.4500  -109.9000   90.0000  top
+Q3        Q_NMOS_GSD        SOT-23                119.3500  -109.7000   90.0000  top
+Q4        Q_NMOS_GSD        SOT-23                124.2500  -109.6000   90.0000  top
+Q5        Q_PMOS_GSD        SOT-23                121.5000   -96.0000  270.0000  top
+R1        10k               R_0603_1608Metric     114.3880  -112.7000    0.0000  top
+R2        10k               R_0603_1608Metric     112.9000  -103.0000  180.0000  top
+R3        10k               R_0603_1608Metric     112.9000  -105.0000  180.0000  top
+R4        4.7k              R_0603_1608Metric     119.2880  -112.7000    0.0000  top
+R5        1k                R_0603_1608Metric     109.7120   -92.1000  180.0000  top
+R6        10k               R_0603_1608Metric     109.6120  -112.7000    0.0000  top
+R7        4.7k              R_0603_1608Metric     118.5120  -107.0000    0.0000  top
+R8        4.7k              R_0603_1608Metric     121.4880   -91.7000    0.0000  top
+R9        1k                R_0603_1608Metric     124.2000   -92.5125   90.0000  top
+R10       10k               R_0603_1608Metric     121.5120   -93.4000    0.0000  top
+R11       4.7k              R_0603_1608Metric     124.1880  -112.7000    0.0000  top
+U1        LD3985M33R_SOT23  SOT-23-5              112.7000   -95.1000    0.0000  top
+## End
