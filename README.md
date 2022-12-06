@@ -16,12 +16,14 @@ I2C_1Wire_Converter with DS2485
   * 電源電圧：3.3V~5V
   * 基板サイズ25mm x30mm、固定穴M3x2 幅19mm
   
+ ## 販売サイト
+  * [スイッチサイエンス][2]
   
 <img src="https://github.com/meerstern/I2C_1Wire_Converter/blob/main/IMG/img1.jpg" width="360">
    
 <img src="https://github.com/meerstern/I2C_1Wire_Converter/blob/main/IMG/img2.jpg" width="360">
   
 [1]: https://www.maximintegrated.com/jp/products/ibutton-one-wire/memory-products/DS2485.html
-  
+[2]: https://www.switch-science.com/products/8650
   
   
